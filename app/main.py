@@ -17,12 +17,31 @@ from app.ab_service import (
     get_results,
     experiments as ab_experiments,
 )
+from app.bmc_service import (
+    create_bmc,
+    get_bmc,
+    get_all_bmcs,
+    update_bmc,
+    delete_bmc,
+)
 
 
 class ExperimentCreate(BaseModel):
     key: str
     variants: dict
     active: bool = True
+
+
+class BMCUpdate(BaseModel):
+    keyPartners: Optional[str] = None
+    keyActivities: Optional[str] = None
+    keyResources: Optional[str] = None
+    valuePropositions: Optional[str] = None
+    customerRelationships: Optional[str] = None
+    channels: Optional[str] = None
+    customerSegments: Optional[str] = None
+    costStructure: Optional[str] = None
+    revenueStreams: Optional[str] = None
 
 
 class EventCreate(BaseModel):
@@ -91,3 +110,104 @@ async def get_isochrone():
     raise HTTPException(
         status_code=501, detail="Isochrone endpoint not yet re-implemented"
     )
+
+
+@app.post("/bmc")
+async def post_bmc():
+    bmc = create_bmc()
+    return {
+        "id": bmc.id,
+        "keyPartners": bmc.key_partners,
+        "keyActivities": bmc.key_activities,
+        "keyResources": bmc.key_resources,
+        "valuePropositions": bmc.value_propositions,
+        "customerRelationships": bmc.customer_relationships,
+        "channels": bmc.channels,
+        "customerSegments": bmc.customer_segments,
+        "costStructure": bmc.cost_structure,
+        "revenueStreams": bmc.revenue_streams,
+        "createdAt": bmc.created_at.isoformat(),
+        "updatedAt": bmc.updated_at.isoformat(),
+    }
+
+
+@app.get("/bmc")
+async def list_bmcs():
+    return [
+        {
+            "id": bmc.id,
+            "keyPartners": bmc.key_partners,
+            "keyActivities": bmc.key_activities,
+            "keyResources": bmc.key_resources,
+            "valuePropositions": bmc.value_propositions,
+            "customerRelationships": bmc.customer_relationships,
+            "channels": bmc.channels,
+            "customerSegments": bmc.customer_segments,
+            "costStructure": bmc.cost_structure,
+            "revenueStreams": bmc.revenue_streams,
+            "createdAt": bmc.created_at.isoformat(),
+            "updatedAt": bmc.updated_at.isoformat(),
+        }
+        for bmc in get_all_bmcs()
+    ]
+
+
+@app.get("/bmc/{bmc_id}")
+async def get_bmc_by_id(bmc_id: str):
+    bmc = get_bmc(bmc_id)
+    if not bmc:
+        raise HTTPException(status_code=404, detail="BMC not found")
+    return {
+        "id": bmc.id,
+        "keyPartners": bmc.key_partners,
+        "keyActivities": bmc.key_activities,
+        "keyResources": bmc.key_resources,
+        "valuePropositions": bmc.value_propositions,
+        "customerRelationships": bmc.customer_relationships,
+        "channels": bmc.channels,
+        "customerSegments": bmc.customer_segments,
+        "costStructure": bmc.cost_structure,
+        "revenueStreams": bmc.revenue_streams,
+        "createdAt": bmc.created_at.isoformat(),
+        "updatedAt": bmc.updated_at.isoformat(),
+    }
+
+
+@app.patch("/bmc/{bmc_id}")
+async def patch_bmc(bmc_id: str, body: BMCUpdate):
+    bmc = update_bmc(
+        bmc_id,
+        key_partners=body.keyPartners,
+        key_activities=body.keyActivities,
+        key_resources=body.keyResources,
+        value_propositions=body.valuePropositions,
+        customer_relationships=body.customerRelationships,
+        channels=body.channels,
+        customer_segments=body.customerSegments,
+        cost_structure=body.costStructure,
+        revenue_streams=body.revenueStreams,
+    )
+    if not bmc:
+        raise HTTPException(status_code=404, detail="BMC not found")
+    return {
+        "id": bmc.id,
+        "keyPartners": bmc.key_partners,
+        "keyActivities": bmc.key_activities,
+        "keyResources": bmc.key_resources,
+        "valuePropositions": bmc.value_propositions,
+        "customerRelationships": bmc.customer_relationships,
+        "channels": bmc.channels,
+        "customerSegments": bmc.customer_segments,
+        "costStructure": bmc.cost_structure,
+        "revenueStreams": bmc.revenue_streams,
+        "createdAt": bmc.created_at.isoformat(),
+        "updatedAt": bmc.updated_at.isoformat(),
+    }
+
+
+@app.delete("/bmc/{bmc_id}")
+async def delete_bmc_by_id(bmc_id: str):
+    deleted = delete_bmc(bmc_id)
+    if not deleted:
+        raise HTTPException(status_code=404, detail="BMC not found")
+    return {"status": "ok"}

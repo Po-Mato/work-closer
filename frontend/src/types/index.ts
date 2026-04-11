@@ -26,7 +26,7 @@ export interface GeoJSONFeatureCollection {
   features: GeoJSONFeature[];
 }
 
-export interface IsochroneResponse extends GeoJSONFeatureCollection {}
+export type IsochroneResponse = GeoJSONFeatureCollection;
 
 export interface CommuteCondition {
   destination: Coordinates | null;

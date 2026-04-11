@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import type { Coordinates, TravelMode, GeoJSONFeatureCollection, BusinessModelCanvas, SWOTData } from '../types';
+import { createBMC } from '../api/bmc';
 
 interface AppState {
   destination: Coordinates | null;
@@ -11,6 +12,7 @@ interface AppState {
   clickedPoint: Coordinates | null;
   businessModelCanvas: BusinessModelCanvas | null;
   swotData: SWOTData | null;
+  bmcSyncStatus: 'idle' | 'loading' | 'syncing' | 'error';
 
   setDestination: (destination: Coordinates | null) => void;
   setTravelTimeMinutes: (minutes: number) => void;
@@ -23,6 +25,7 @@ interface AppState {
   updateBusinessModelCanvas: (updates: Partial<BusinessModelCanvas>) => void;
   setSwotData: (data: SWOTData | null) => void;
   updateSwotData: (updates: Partial<SWOTData>) => void;
+  initBMC: () => Promise<void>;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -35,6 +38,7 @@ export const useAppStore = create<AppState>((set) => ({
   clickedPoint: null,
   businessModelCanvas: null,
   swotData: null,
+  bmcSyncStatus: 'idle',
 
   setDestination: (destination) => set({ destination }),
   setTravelTimeMinutes: (travelTimeMinutes) => set({ travelTimeMinutes }),
@@ -55,4 +59,29 @@ export const useAppStore = create<AppState>((set) => ({
     set((state) => ({
       swotData: state.swotData ? { ...state.swotData, ...updates } : null,
     })),
+  initBMC: async () => {
+    set({ bmcSyncStatus: 'loading' });
+    try {
+      const bmc = await createBMC();
+      set({
+        businessModelCanvas: {
+          id: bmc.id,
+          keyPartners: bmc.keyPartners,
+          keyActivities: bmc.keyActivities,
+          keyResources: bmc.keyResources,
+          valuePropositions: bmc.valuePropositions,
+          customerRelationships: bmc.customerRelationships,
+          channels: bmc.channels,
+          customerSegments: bmc.customerSegments,
+          costStructure: bmc.costStructure,
+          revenueStreams: bmc.revenueStreams,
+          createdAt: bmc.createdAt,
+          updatedAt: bmc.updatedAt,
+        },
+        bmcSyncStatus: 'idle',
+      });
+    } catch {
+      set({ bmcSyncStatus: 'error' });
+    }
+  },
 }));

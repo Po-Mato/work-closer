@@ -5,27 +5,14 @@ import type { BMCBlockData, BusinessModelCanvas } from '../../types';
 
 export function BusinessModelCanvas() {
   const canvas = useAppStore((state) => state.businessModelCanvas);
-  const setBusinessModelCanvas = useAppStore((state) => state.setBusinessModelCanvas);
   const updateBusinessModelCanvas = useAppStore((state) => state.updateBusinessModelCanvas);
+  const initBMC = useAppStore((state) => state.initBMC);
 
   useEffect(() => {
     if (!canvas) {
-      setBusinessModelCanvas({
-        id: 'bmc-1',
-        keyPartners: '',
-        keyActivities: '',
-        keyResources: '',
-        valuePropositions: '',
-        customerRelationships: '',
-        channels: '',
-        customerSegments: '',
-        costStructure: '',
-        revenueStreams: '',
-        createdAt: new Date().toISOString(),
-        updatedAt: new Date().toISOString(),
-      });
+      initBMC();
     }
-  }, [canvas, setBusinessModelCanvas]);
+  }, [canvas, initBMC]);
 
   const handleBlockChange = (key: BMCBlockData['key'], value: string) => {
     updateBusinessModelCanvas({ [key]: value } as Partial<BusinessModelCanvas>);
