@@ -48,3 +48,24 @@ export interface EventPayload {
   event_type: string;
   user_id?: string;
 }
+
+export interface BusinessModelCanvas {
+  id: string;
+  ideaId?: string;
+  keyPartners: string;
+  keyActivities: string;
+  keyResources: string;
+  valuePropositions: string;
+  customerRelationships: string;
+  channels: string;
+  customerSegments: string;
+  costStructure: string;
+  revenueStreams: string;
+  createdAt: string;
+  updatedAt: string;
+}
+
+export interface BMCBlockData {
+  key: keyof Pick<BusinessModelCanvas, 'keyPartners' | 'keyActivities' | 'keyResources' | 'valuePropositions' | 'customerRelationships' | 'channels' | 'customerSegments' | 'costStructure' | 'revenueStreams'>;
+  label: string;
+}

@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Coordinates, TravelMode, GeoJSONFeatureCollection } from '../types';
+import type { Coordinates, TravelMode, GeoJSONFeatureCollection, BusinessModelCanvas } from '../types';
 
 interface AppState {
   destination: Coordinates | null;
@@ -9,6 +9,7 @@ interface AppState {
   mapCenter: Coordinates;
   isochroneData: GeoJSONFeatureCollection | null;
   clickedPoint: Coordinates | null;
+  businessModelCanvas: BusinessModelCanvas | null;
 
   setDestination: (destination: Coordinates | null) => void;
   setTravelTimeMinutes: (minutes: number) => void;
@@ -17,6 +18,8 @@ interface AppState {
   setMapCenter: (center: Coordinates) => void;
   setIsochroneData: (data: GeoJSONFeatureCollection | null) => void;
   setClickedPoint: (point: Coordinates | null) => void;
+  setBusinessModelCanvas: (canvas: BusinessModelCanvas | null) => void;
+  updateBusinessModelCanvas: (updates: Partial<BusinessModelCanvas>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -24,9 +27,10 @@ export const useAppStore = create<AppState>((set) => ({
   travelTimeMinutes: 30,
   travelMode: 'car',
   considerTraffic: false,
-  mapCenter: { longitude: 127.036, latitude: 37.566 }, // Seoul default
+  mapCenter: { longitude: 127.036, latitude: 37.566 },
   isochroneData: null,
   clickedPoint: null,
+  businessModelCanvas: null,
 
   setDestination: (destination) => set({ destination }),
   setTravelTimeMinutes: (travelTimeMinutes) => set({ travelTimeMinutes }),
@@ -35,4 +39,11 @@ export const useAppStore = create<AppState>((set) => ({
   setMapCenter: (mapCenter) => set({ mapCenter }),
   setIsochroneData: (isochroneData) => set({ isochroneData }),
   setClickedPoint: (clickedPoint) => set({ clickedPoint }),
+  setBusinessModelCanvas: (businessModelCanvas) => set({ businessModelCanvas }),
+  updateBusinessModelCanvas: (updates) =>
+    set((state) => ({
+      businessModelCanvas: state.businessModelCanvas
+        ? { ...state.businessModelCanvas, ...updates, updatedAt: new Date().toISOString() }
+        : null,
+    })),
 }));

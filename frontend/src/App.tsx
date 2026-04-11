@@ -1,11 +1,15 @@
+import { useState } from 'react';
 import { CommuteTimeSelector } from './components/Input/CommuteTimeSelector';
 import { TravelModeSelector } from './components/Input/TravelModeSelector';
 import { TrafficToggle } from './components/Input/TrafficToggle';
 import { DestinationSearch } from './components/Input/DestinationSearch';
 import { NaverMapComponent } from './components/Map/NaverMapComponent';
+import { BusinessModelCanvas } from './components/BusinessModelCanvas';
 import './index.css';
 
 function App() {
+  const [showCanvas, setShowCanvas] = useState(false);
+
   return (
     <div className="app">
       <header className="app-header">
@@ -19,10 +23,17 @@ function App() {
           <CommuteTimeSelector />
           <TravelModeSelector />
           <TrafficToggle />
+          <button
+            type="button"
+            className={`bmc-toggle ${showCanvas ? 'active' : ''}`}
+            onClick={() => setShowCanvas(!showCanvas)}
+          >
+            {showCanvas ? '지도로 돌아가기' : 'Business Model Canvas'}
+          </button>
         </aside>
 
         <main className="map-container">
-          <NaverMapComponent />
+          {showCanvas ? <BusinessModelCanvas /> : <NaverMapComponent />}
         </main>
       </div>
     </div>

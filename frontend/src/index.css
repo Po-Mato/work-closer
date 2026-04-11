@@ -202,3 +202,113 @@ body {
   height: 18px;
   accent-color: var(--primary);
 }
+
+.bmc-toggle {
+  padding: 12px 16px;
+  background: var(--surface);
+  border: 1px solid var(--primary);
+  border-radius: 8px;
+  color: var(--primary);
+  font-size: 0.875rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.15s;
+}
+
+.bmc-toggle:hover,
+.bmc-toggle.active {
+  background: var(--primary);
+  color: white;
+}
+
+.business-model-canvas {
+  padding: 20px;
+  background: var(--bg);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.bmc-header {
+  margin-bottom: 20px;
+}
+
+.bmc-header h2 {
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.bmc-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.bmc-grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 12px;
+}
+
+.bmc-block {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.bmc-block__header {
+  background: var(--primary);
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.bmc-block__title {
+  font-size: 0.8125rem;
+  font-weight: 600;
+}
+
+.bmc-block__toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.bmc-block__toggle:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.bmc-block__textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  resize: none;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  flex: 1;
+  min-height: 60px;
+}
+
+.bmc-block__textarea:focus {
+  background: #f0f4ff;
+}
+
+@media (max-width: 900px) {
+  .bmc-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
