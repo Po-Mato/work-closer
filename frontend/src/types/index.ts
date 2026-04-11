@@ -34,3 +34,17 @@ export interface CommuteCondition {
   travelMode: TravelMode;
   considerTraffic: boolean;
 }
+
+export interface ExperimentResponse {
+  key: string;
+  variants: Record<string, number>;
+  active: boolean;
+  assigned_variant: string;
+}
+
+export interface EventPayload {
+  experiment_key: string;
+  variant: string;
+  event_type: string;
+  user_id?: string;
+}
