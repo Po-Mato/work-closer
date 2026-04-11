@@ -69,3 +69,10 @@ export interface BMCBlockData {
   key: keyof Pick<BusinessModelCanvas, 'keyPartners' | 'keyActivities' | 'keyResources' | 'valuePropositions' | 'customerRelationships' | 'channels' | 'customerSegments' | 'costStructure' | 'revenueStreams'>;
   label: string;
 }
+
+export interface SWOTData {
+  strengths: string;
+  weaknesses: string;
+  opportunities: string;
+  threats: string;
+}

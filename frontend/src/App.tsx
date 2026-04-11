@@ -5,10 +5,13 @@ import { TrafficToggle } from './components/Input/TrafficToggle';
 import { DestinationSearch } from './components/Input/DestinationSearch';
 import { NaverMapComponent } from './components/Map/NaverMapComponent';
 import { BusinessModelCanvas } from './components/BusinessModelCanvas';
+import { SWOTAnalysis } from './components/SWOTAnalysis';
 import './index.css';
 
+type ViewMode = 'map' | 'bmc' | 'swot';
+
 function App() {
-  const [showCanvas, setShowCanvas] = useState(false);
+  const [viewMode, setViewMode] = useState<ViewMode>('map');
 
   return (
     <div className="app">
@@ -25,15 +28,24 @@ function App() {
           <TrafficToggle />
           <button
             type="button"
-            className={`bmc-toggle ${showCanvas ? 'active' : ''}`}
-            onClick={() => setShowCanvas(!showCanvas)}
+            className={`bmc-toggle ${viewMode === 'bmc' ? 'active' : ''}`}
+            onClick={() => setViewMode(viewMode === 'bmc' ? 'map' : 'bmc')}
           >
-            {showCanvas ? '지도로 돌아가기' : 'Business Model Canvas'}
+            {viewMode === 'bmc' ? '지도로 돌아가기' : 'Business Model Canvas'}
+          </button>
+          <button
+            type="button"
+            className={`bmc-toggle ${viewMode === 'swot' ? 'active' : ''}`}
+            onClick={() => setViewMode(viewMode === 'swot' ? 'map' : 'swot')}
+          >
+            {viewMode === 'swot' ? '지도로 돌아가기' : 'SWOT Analysis'}
           </button>
         </aside>
 
         <main className="map-container">
-          {showCanvas ? <BusinessModelCanvas /> : <NaverMapComponent />}
+          {viewMode === 'bmc' && <BusinessModelCanvas />}
+          {viewMode === 'swot' && <SWOTAnalysis />}
+          {viewMode === 'map' && <NaverMapComponent />}
         </main>
       </div>
     </div>

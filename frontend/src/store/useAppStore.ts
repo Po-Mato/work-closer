@@ -1,5 +1,5 @@
 import { create } from 'zustand';
-import type { Coordinates, TravelMode, GeoJSONFeatureCollection, BusinessModelCanvas } from '../types';
+import type { Coordinates, TravelMode, GeoJSONFeatureCollection, BusinessModelCanvas, SWOTData } from '../types';
 
 interface AppState {
   destination: Coordinates | null;
@@ -10,6 +10,7 @@ interface AppState {
   isochroneData: GeoJSONFeatureCollection | null;
   clickedPoint: Coordinates | null;
   businessModelCanvas: BusinessModelCanvas | null;
+  swotData: SWOTData | null;
 
   setDestination: (destination: Coordinates | null) => void;
   setTravelTimeMinutes: (minutes: number) => void;
@@ -20,6 +21,8 @@ interface AppState {
   setClickedPoint: (point: Coordinates | null) => void;
   setBusinessModelCanvas: (canvas: BusinessModelCanvas | null) => void;
   updateBusinessModelCanvas: (updates: Partial<BusinessModelCanvas>) => void;
+  setSwotData: (data: SWOTData | null) => void;
+  updateSwotData: (updates: Partial<SWOTData>) => void;
 }
 
 export const useAppStore = create<AppState>((set) => ({
@@ -31,6 +34,7 @@ export const useAppStore = create<AppState>((set) => ({
   isochroneData: null,
   clickedPoint: null,
   businessModelCanvas: null,
+  swotData: null,
 
   setDestination: (destination) => set({ destination }),
   setTravelTimeMinutes: (travelTimeMinutes) => set({ travelTimeMinutes }),
@@ -45,5 +49,10 @@ export const useAppStore = create<AppState>((set) => ({
       businessModelCanvas: state.businessModelCanvas
         ? { ...state.businessModelCanvas, ...updates, updatedAt: new Date().toISOString() }
         : null,
+    })),
+  setSwotData: (swotData) => set({ swotData }),
+  updateSwotData: (updates) =>
+    set((state) => ({
+      swotData: state.swotData ? { ...state.swotData, ...updates } : null,
     })),
 }));

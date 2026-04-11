@@ -312,3 +312,88 @@ body {
     grid-template-columns: repeat(2, 1fr);
   }
 }
+
+.swot-analysis {
+  padding: 20px;
+  background: var(--bg);
+  height: 100%;
+  overflow-y: auto;
+}
+
+.swot-header {
+  margin-bottom: 20px;
+}
+
+.swot-header h2 {
+  font-size: 1.25rem;
+  color: var(--text);
+}
+
+.swot-subtitle {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-top: 4px;
+}
+
+.swot-grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 12px;
+}
+
+.swot-quadrant {
+  background: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
+}
+
+.swot-quadrant__header {
+  color: white;
+  padding: 8px 12px;
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  cursor: pointer;
+}
+
+.swot-quadrant__title {
+  font-size: 0.875rem;
+  font-weight: 700;
+}
+
+.swot-quadrant__toggle {
+  background: none;
+  border: none;
+  color: white;
+  font-size: 1rem;
+  cursor: pointer;
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 4px;
+}
+
+.swot-quadrant__toggle:hover {
+  background: rgba(255,255,255,0.2);
+}
+
+.swot-quadrant__textarea {
+  width: 100%;
+  padding: 8px 12px;
+  border: none;
+  resize: none;
+  font-size: 0.8125rem;
+  font-family: inherit;
+  outline: none;
+  flex: 1;
+  min-height: 80px;
+}
+
+.swot-quadrant__textarea:focus {
+  background: #f0f4ff;
+}
