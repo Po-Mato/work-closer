@@ -168,6 +168,45 @@ async def _get_travel_time_transit(
         return None
 
 
+async def _get_travel_time_pedestrian(
+    client: httpx.AsyncClient,
+    start_coords: tuple[float, float],
+    end_coords: tuple[float, float],
+) -> Optional[float]:
+    """Fetches pedestrian travel time via Naver Directions Pedestrian API."""
+    url = "https://naveropenapi.apigw.ntruss.com/map-direction-v1/pedestrian"
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID": NAVER_CLIENT_ID,
+        "X-NCP-APIGW-API-KEY": NAVER_CLIENT_SECRET,
+    }
+    params = {
+        "start": f"{start_coords[0]},{start_coords[1]}",
+        "goal": f"{end_coords[0]},{end_coords[1]}",
+        "footsearch": "0",
+    }
+
+    try:
+        response = await client.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("code") == 0:
+            ped_routes = data.get("route", {}).get("pedestrian", [])
+            if not ped_routes:
+                return None
+            duration_ms = ped_routes[0]["summary"]["duration"]
+            return duration_ms / 1000.0
+        else:
+            logger.warning(
+                "naver_pedestrian_api_error", message=data.get("message", "Unknown")
+            )
+            return None
+
+    except httpx.HTTPError as e:
+        logger.error("http_error_pedestrian", error=str(e), url=url)
+        return None
+
+
 def _cross(o: Point, a: Point, b: Point) -> float:
     return (a.x - o.x) * (b.y - o.y) - (a.y - o.y) * (b.x - o.x)
 
