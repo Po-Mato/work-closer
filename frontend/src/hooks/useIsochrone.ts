@@ -7,6 +7,7 @@ export function useIsochrone() {
   const destination = useAppStore((state) => state.destination);
   const travelTimeMinutes = useAppStore((state) => state.travelTimeMinutes);
   const travelMode = useAppStore((state) => state.travelMode);
+  const considerTraffic = useAppStore((state) => state.considerTraffic);
 
   const request: IsochroneRequest | null = destination
     ? {
@@ -14,6 +15,7 @@ export function useIsochrone() {
         startLatitude: destination.latitude,
         travelTimeMinutes,
         travelMode,
+        considerTraffic,
       }
     : null;
 

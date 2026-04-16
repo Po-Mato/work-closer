@@ -10,6 +10,7 @@ export interface IsochroneRequest {
   startLatitude: number;
   travelTimeMinutes: number;
   travelMode: TravelMode;
+  considerTraffic?: boolean;
 }
 
 export interface GeoJSONFeature {

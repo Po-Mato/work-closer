@@ -44,11 +44,43 @@ class BMCUpdate(BaseModel):
     revenueStreams: Optional[str] = None
 
 
+from app.isochrone_service import generate_isochrone_polygon, Point
+
+
+class IsochroneRequest(BaseModel):
+    startLongitude: float
+    startLatitude: float
+    travelTimeMinutes: int
+    travelMode: str = "car"
+    considerTraffic: bool = True
+
+
 class EventCreate(BaseModel):
     experiment_key: str
     variant: str
     event_type: str
     user_id: Optional[str] = None
+
+
+@app.post("/isochrone")
+async def post_isochrone(body: IsochroneRequest):
+    if body.travelMode not in ("car",):
+        raise HTTPException(
+            status_code=400, detail="Only 'car' travel mode is supported"
+        )
+    start = Point(body.startLongitude, body.startLatitude)
+    result = await generate_isochrone_polygon(
+        body.travelTimeMinutes,
+        body.travelMode,
+        start,
+        consider_traffic=body.considerTraffic,
+    )
+    if result is None:
+        raise HTTPException(
+            status_code=422,
+            detail="Could not generate isochrone for the given parameters",
+        )
+    return result
 
 
 @app.get("/")
@@ -105,33 +137,7 @@ async def get_exp_results(key: str):
     return results
 
 
-@app.post("/isochrone")
-async def get_isochrone():
-    raise HTTPException(
-        status_code=501, detail="Isochrone endpoint not yet re-implemented"
-    )
-
-
 @app.post("/bmc")
-async def post_bmc():
-    bmc = create_bmc()
-    return {
-        "id": bmc.id,
-        "keyPartners": bmc.key_partners,
-        "keyActivities": bmc.key_activities,
-        "keyResources": bmc.key_resources,
-        "valuePropositions": bmc.value_propositions,
-        "customerRelationships": bmc.customer_relationships,
-        "channels": bmc.channels,
-        "customerSegments": bmc.customer_segments,
-        "costStructure": bmc.cost_structure,
-        "revenueStreams": bmc.revenue_streams,
-        "createdAt": bmc.created_at.isoformat(),
-        "updatedAt": bmc.updated_at.isoformat(),
-    }
-
-
-@app.get("/bmc")
 async def list_bmcs():
     return [
         {
