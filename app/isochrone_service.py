@@ -74,9 +74,25 @@ async def get_travel_time_naver(
     consider_traffic: bool = True,
 ) -> Optional[float]:
     """Fetches travel time using Naver Directions API (async)."""
-    if travel_mode != "car":
-        raise ValueError("Unsupported travel mode")
+    if travel_mode == "car":
+        return await _get_travel_time_car(
+            client, start_coords, end_coords, consider_traffic
+        )
+    elif travel_mode == "transit":
+        return await _get_travel_time_transit(client, start_coords, end_coords)
+    elif travel_mode == "pedestrian":
+        return await _get_travel_time_pedestrian(client, start_coords, end_coords)
+    else:
+        raise ValueError(f"Unsupported travel mode: {travel_mode}")
 
+
+async def _get_travel_time_car(
+    client: httpx.AsyncClient,
+    start_coords: tuple[float, float],
+    end_coords: tuple[float, float],
+    consider_traffic: bool = True,
+) -> Optional[float]:
+    """Fetches driving/walking travel time via Naver Directions API."""
     url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/driving"
     headers = {
         "X-NCP-APIGW-API-KEY-ID": NAVER_CLIENT_ID,
@@ -103,6 +119,52 @@ async def get_travel_time_naver(
 
     except httpx.HTTPError as e:
         logger.error("http_error", error=str(e), url=url)
+        return None
+
+
+async def _get_travel_time_transit(
+    client: httpx.AsyncClient,
+    start_coords: tuple[float, float],
+    end_coords: tuple[float, float],
+) -> Optional[float]:
+    """Fetches public transit travel time via Naver Directions Transit API."""
+    url = "https://naveropenapi.apigw.ntruss.com/map-direction/v1/transit"
+    headers = {
+        "X-NCP-APIGW-API-KEY-ID": NAVER_CLIENT_ID,
+        "X-NCP-APIGW-API-KEY": NAVER_CLIENT_SECRET,
+    }
+    params = {
+        "start": f"{start_coords[0]},{start_coords[1]}",
+        "goal": f"{end_coords[0]},{end_coords[1]}",
+    }
+
+    try:
+        response = await client.get(url, headers=headers, params=params)
+        response.raise_for_status()
+        data = response.json()
+
+        if data.get("code") == 0:
+            routes = data.get("route", {})
+            transitRoutes = routes.get("transit", [])
+            if not transitRoutes:
+                pedRoutes = routes.get("pedestrian", [])
+                if pedRoutes:
+                    duration_ms = pedRoutes[0]["summary"]["duration"]
+                    return duration_ms / 1000.0
+                return None
+            iters = transitRoutes[0].get("itineraries", [])
+            if not iters:
+                return None
+            duration_ms = iters[0].get("totalTime", 0)
+            return float(duration_ms) if duration_ms > 0 else None
+        else:
+            logger.warning(
+                "naver_transit_api_error", message=data.get("message", "Unknown")
+            )
+            return None
+
+    except httpx.HTTPError as e:
+        logger.error("http_error_transit", error=str(e), url=url)
         return None
 
 
