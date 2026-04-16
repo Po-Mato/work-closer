@@ -64,15 +64,16 @@ class EventCreate(BaseModel):
 
 @app.post("/isochrone")
 async def post_isochrone(body: IsochroneRequest):
-    if body.travelMode not in ("car", "transit"):
+    if body.travelMode not in ("car", "transit", "walk"):
         raise HTTPException(
             status_code=400,
-            detail="Only 'car' and 'transit' travel modes are supported",
+            detail="Only 'car', 'transit', and 'walk' travel modes are supported",
         )
+    api_travel_mode = "pedestrian" if body.travelMode == "walk" else body.travelMode
     start = Point(body.startLongitude, body.startLatitude)
     result = await generate_isochrone_polygon(
         body.travelTimeMinutes,
-        body.travelMode,
+        api_travel_mode,
         start,
         consider_traffic=body.considerTraffic,
     )
